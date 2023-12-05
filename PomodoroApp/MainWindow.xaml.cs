@@ -1,4 +1,6 @@
-﻿using System;
+﻿using PomodoroApp;
+using System;
+using System.ComponentModel;
 using System.IO;
 using System.Media;
 using System.Windows;
@@ -9,7 +11,7 @@ namespace PomodoroTimer
     public partial class MainWindow : Window
     {
         private TimeSpan workTime = TimeSpan.FromMinutes(25);
-        private TimeSpan breakTime = TimeSpan.FromMinutes(5);
+        private TimeSpan breakTime = TimeSpan.FromMinutes(1);
         private DispatcherTimer timer;
         private TimeSpan currentTime;
         private bool isWorking = true;
@@ -112,6 +114,35 @@ namespace PomodoroTimer
                     UpdateTimerText();
                 }
             }
+        }
+
+        // Add a method to handle the click event of the settings button
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenSettings();
+        }
+
+        // Method to open the settings window
+        private void OpenSettings()
+        {
+            SettingsWindow settingsWindow = new SettingsWindow();
+            settingsWindow.UpdateSettings(workTime, breakTime); // Pass current times to settings window
+
+            // Handle the event raised when settings are changed in the SettingsWindow
+            settingsWindow.SettingsChanged += SettingsWindow_SettingsChanged;
+
+            if (settingsWindow.ShowDialog() == true)
+            {
+                workTime = settingsWindow.WorkingTime;
+                breakTime = settingsWindow.BreakTime;
+                ResetTimer(); // Reset the timer with the new times
+            }
+        }
+
+        // Event handler for settings changed event from SettingsWindow
+        private void SettingsWindow_SettingsChanged(object sender, SettingsChangedEventArgs e)
+        {
+            ResetTimer(); // Reset the timer with the new times
         }
     }
 }
