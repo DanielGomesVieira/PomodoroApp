@@ -1,7 +1,5 @@
 ﻿using PomodoroApp;
 using System;
-using System.ComponentModel;
-using System.IO;
 using System.Media;
 using System.Windows;
 using System.Windows.Threading;
@@ -16,6 +14,7 @@ namespace PomodoroTimer
         private TimeSpan currentTime;
         private bool isWorking = true;
         private SoundPlayer alarmSoundPlayer;
+        private SoundPlayer clickSoundPlayer;
 
         public MainWindow()
         {
@@ -25,9 +24,10 @@ namespace PomodoroTimer
             timer.Tick += Timer_Tick;
             ResetTimer();
 
-            // Initialize the SoundPlayer with the alarm sound file path
             string alarmSoundFilePath = @"C:\projects\pomodoroTimer\PomodoroApp\PomodoroApp\assets\alarm.wav";
             alarmSoundPlayer = new SoundPlayer(alarmSoundFilePath);
+            string clickSoundFilePath = @"C:\projects\pomodoroTimer\PomodoroApp\PomodoroApp\assets\click.wav";
+            clickSoundPlayer = new SoundPlayer(clickSoundFilePath);
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -39,7 +39,7 @@ namespace PomodoroTimer
                 this.Topmost = true;
                 this.Topmost = false;
                 this.Focus();
-                PlayAlarmSound();
+                alarmSoundPlayer.Play();
 
                 if (isWorking)
                 {
@@ -61,11 +61,6 @@ namespace PomodoroTimer
             UpdateTimerText();
         }
 
-        private void PlayAlarmSound()
-        {
-            alarmSoundPlayer.Play();
-        }
-
         private void ResetTimer()
         {
             currentTime = isWorking ? workTime : breakTime;
@@ -82,6 +77,7 @@ namespace PomodoroTimer
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
+            clickSoundPlayer.Play();
             if (!timer.IsEnabled)
             {
                 if (isWorking)
@@ -98,7 +94,7 @@ namespace PomodoroTimer
             }
             else
             {
-                if (!isWorking) // If it's break time
+                if (!isWorking)
                 {
                     timer.Stop();
                     currentTime = workTime;
@@ -106,7 +102,7 @@ namespace PomodoroTimer
                     isWorking = true;
                     UpdateTimerText();
                 }
-                else // If it's work time
+                else
                 {
                     timer.Stop();
                     currentTime = isWorking ? workTime : breakTime;
@@ -116,33 +112,30 @@ namespace PomodoroTimer
             }
         }
 
-        // Add a method to handle the click event of the settings button
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
+            clickSoundPlayer.Play();
             OpenSettings();
         }
 
-        // Method to open the settings window
         private void OpenSettings()
         {
             SettingsWindow settingsWindow = new SettingsWindow();
-            settingsWindow.UpdateSettings(workTime, breakTime); // Pass current times to settings window
-
-            // Handle the event raised when settings are changed in the SettingsWindow
+            settingsWindow.UpdateSettings(workTime, breakTime);
             settingsWindow.SettingsChanged += SettingsWindow_SettingsChanged;
 
             if (settingsWindow.ShowDialog() == true)
             {
                 workTime = settingsWindow.WorkingTime;
                 breakTime = settingsWindow.BreakTime;
-                ResetTimer(); // Reset the timer with the new times
+                timer.Stop();
+                startButton.Content = "Start";
+                ResetTimer();
             }
         }
-
-        // Event handler for settings changed event from SettingsWindow
         private void SettingsWindow_SettingsChanged(object sender, SettingsChangedEventArgs e)
         {
-            ResetTimer(); // Reset the timer with the new times
+            ResetTimer();
         }
     }
 }

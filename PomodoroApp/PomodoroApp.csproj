@@ -103,6 +103,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\alarm.wav" />
+    <Content Include="assets\click.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
