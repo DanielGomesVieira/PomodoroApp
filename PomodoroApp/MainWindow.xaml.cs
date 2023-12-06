@@ -1,13 +1,23 @@
 ﻿using PomodoroApp;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Media;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Newtonsoft.Json;
+
 
 namespace PomodoroTimer
 {
+    public class CompletedCycle
+    {
+        public int CompletedMinutes { get; set; }
+        public DateTime CompletionDate { get; set; }
+    } 
+
     public partial class MainWindow : Window
     {
         private TimeSpan workTime = TimeSpan.FromMinutes(25);
@@ -18,6 +28,7 @@ namespace PomodoroTimer
         private SoundPlayer alarmSoundPlayer;
         private SoundPlayer clickSoundPlayer;
         public int CompletedMinutes { get; set; } = 0;
+        private List<CompletedCycle> completedCycles = new List<CompletedCycle>();
 
         public MainWindow()
         {
@@ -52,7 +63,17 @@ namespace PomodoroTimer
                     isWorking = false;
                     startButton.Content = "Start";
                     CompletedMinutes += workTime.Minutes;
+                    SaveCompletedMinutes();
+
+                    CompletedCycle completedCycle = new CompletedCycle
+                    {
+                        CompletedMinutes = workTime.Minutes,
+                        CompletionDate = DateTime.Now
+                    };
+
+                    completedCycles.Add(completedCycle);
                     SaveCompletedCycles();
+
                 }
                 else
                 {
@@ -158,7 +179,7 @@ namespace PomodoroTimer
         private void OpenAnalytics()
         {
             AnalyticsWindow analyticsWindow = new AnalyticsWindow();
-            analyticsWindow.UpdateAnalytics(CompletedMinutes);
+            analyticsWindow.UpdateAnalytics();
             if (analyticsWindow.ShowDialog() == true)
             {
                 ResetTimer();
@@ -199,7 +220,7 @@ namespace PomodoroTimer
             }
         }
 
-        private void SaveCompletedCycles()
+        private void SaveCompletedMinutes()
         {
             string folderPath = "bin";
             string filePath = Path.Combine(folderPath, "score.bin");
@@ -212,6 +233,40 @@ namespace PomodoroTimer
                 }
 
                 File.WriteAllText(filePath, CompletedMinutes.ToString());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving completed cycles: {ex.Message}");
+            }
+        }
+        private void SaveCompletedCycles()
+        {
+            string folderPath = "bin";
+            string filePath = Path.Combine(folderPath, "cycles.json");
+
+            try
+            {
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                List<CompletedCycle> existingCycles = new List<CompletedCycle>();
+
+                // Check if the file already exists
+                if (File.Exists(filePath))
+                {
+                    // Read existing content and deserialize it
+                    string existingContent = File.ReadAllText(filePath);
+                    existingCycles = JsonConvert.DeserializeObject<List<CompletedCycle>>(existingContent);
+                }
+
+                // Append the new cycles to the existing ones
+                existingCycles.AddRange(completedCycles);
+
+                // Serialize the combined list and save it to the file
+                string jsonContent = JsonConvert.SerializeObject(existingCycles);
+                File.WriteAllText(filePath, jsonContent);
             }
             catch (Exception ex)
             {

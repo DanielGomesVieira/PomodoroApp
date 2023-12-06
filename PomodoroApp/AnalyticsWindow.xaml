@@ -5,11 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PomodoroApp"
         mc:Ignorable="d"
-        Title="Analytics" Height="190" Width="300">
+        Title="Analytics" Height="230" Width="300">
     <Grid>
         <StackPanel Margin="20">
             <TextBlock x:Name="minutesTodayBox" Text="Working minutes today:" Margin="0 0 0 10" HorizontalAlignment="Center"/>
-            <TextBlock Text="Working minutes this week:" Margin="0 10 0 10" HorizontalAlignment="Center"/>
+            <TextBlock x:Name="minutesWeekBox" Text="Working minutes past 7 days:" Margin="0 10 0 10" HorizontalAlignment="Center"/>
+            <TextBlock x:Name="minutesMonthBox" Text="Working minutes this month:" Margin="0 10 0 10" HorizontalAlignment="Center"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 20 0 0">
                 <Button Content="Back" Width="75" Margin="5" Click="BackButton_Click" Cursor="Hand"/>
