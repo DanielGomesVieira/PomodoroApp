@@ -2,6 +2,7 @@
 using System;
 using System.Media;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace PomodoroTimer
@@ -66,6 +67,15 @@ namespace PomodoroTimer
             currentTime = isWorking ? workTime : breakTime;
             UpdateTimerText();
         }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter || e.Key == Key.Space)
+            {
+                StartButton_Click(sender, e);
+            }
+        }
+
 
         private void UpdateTimerText()
         {

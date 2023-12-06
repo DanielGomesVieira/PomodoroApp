@@ -1,7 +1,9 @@
 ﻿<Window x:Class="PomodoroApp.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Settings" Height="250" Width="300">
+        Title="Settings" Height="250" Width="300" KeyDown="Window_KeyDown"
+        Icon="C:\projects\pomodoroTimer\PomodoroApp\PomodoroApp\assets\icon.png">
+
     <Grid>
         <StackPanel Margin="20">
             <TextBlock Text="Working Time (minutes):" Margin="0 0 0 10"/>
@@ -17,3 +19,4 @@
         </StackPanel>
     </Grid>
 </Window>
+    

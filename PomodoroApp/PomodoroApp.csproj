@@ -104,6 +104,8 @@
   <ItemGroup>
     <Content Include="assets\alarm.wav" />
     <Content Include="assets\click.wav" />
+    <Resource Include="assets\icon.png" />
+    <Resource Include="assets\settings.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

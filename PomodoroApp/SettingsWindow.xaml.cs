@@ -1,6 +1,8 @@
 ﻿using PomodoroTimer;
 using System;
+using System.Media;
 using System.Windows;
+using System.Windows.Input;
 
 namespace PomodoroApp
 {
@@ -8,39 +10,46 @@ namespace PomodoroApp
     {
         public TimeSpan WorkingTime { get; set; }
         public TimeSpan BreakTime { get; set; }
+        private SoundPlayer clickSoundPlayer;
 
-        // Define an event to notify when settings are changed
         public event EventHandler<SettingsChangedEventArgs> SettingsChanged;
 
         public SettingsWindow()
         {
             InitializeComponent();
+            string clickSoundFilePath = @"C:\projects\pomodoroTimer\PomodoroApp\PomodoroApp\assets\click.wav";
+            clickSoundPlayer = new SoundPlayer(clickSoundFilePath);
         }
 
-        // Method to update the UI elements with current work and break times
         public void UpdateSettings(TimeSpan currentWorkingTime, TimeSpan currentBreakTime)
         {
             WorkingTime = currentWorkingTime;
             BreakTime = currentBreakTime;
 
-            // Fill in the text boxes with current time values
             workingTimeTextBox.Text = WorkingTime.TotalMinutes.ToString();
             breakTimeTextBox.Text = BreakTime.TotalMinutes.ToString();
         }
 
-        // Event handlers for Save and Cancel buttons
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                SaveButton_Click(sender, e);
+            }
+        }
+
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
+            clickSoundPlayer.Play();
             if (int.TryParse(workingTimeTextBox.Text, out int newWorkingMinutes) &&
                 int.TryParse(breakTimeTextBox.Text, out int newBreakMinutes))
             {
                 WorkingTime = TimeSpan.FromMinutes(newWorkingMinutes);
                 BreakTime = TimeSpan.FromMinutes(newBreakMinutes);
 
-                // Raise the event to notify the changes in settings
                 SettingsChanged?.Invoke(this, new SettingsChangedEventArgs(WorkingTime, BreakTime));
 
-                DialogResult = true; // Set dialog result to true to indicate changes were saved
+                DialogResult = true;
                 Close();
             }
             else
@@ -51,12 +60,12 @@ namespace PomodoroApp
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
+            clickSoundPlayer.Play();
             DialogResult = false;
             Close();
         }
     }
 
-    // Custom event argument class to hold the updated settings
     public class SettingsChangedEventArgs : EventArgs
     {
         public TimeSpan NewWorkingTime { get; }
@@ -68,4 +77,6 @@ namespace PomodoroApp
             NewBreakTime = newBreakTime;
         }
     }
+    
+
 }
