@@ -22,9 +22,6 @@ using System.Xml.Schema;
 
 namespace PomodoroApp
 {
-    /// <summary>
-    /// Interaction logic for AnalyticsWindow.xaml
-    /// </summary>
     public partial class AnalyticsWindow : Window
     {
         private SoundPlayer clickSoundPlayer;
@@ -48,14 +45,12 @@ namespace PomodoroApp
             string folderPath = "bin";
             string filePath = Path.Combine(folderPath, "cycles.json");
 
-            // Read the content of the cycles.json file
             try
             {
                 if (File.Exists(filePath))
                 {
                     string jsonContent = File.ReadAllText(filePath);
 
-                    // Deserialize the JSON content into a list of CompletedCycle objects
                     List<CompletedCycle> allCycles = JsonConvert.DeserializeObject<List<CompletedCycle>>(jsonContent);
 
                     // Calculate total minutes for today
@@ -84,13 +79,11 @@ namespace PomodoroApp
                 }
                 else
                 {
-                    // Handle the case where the file doesn't exist
                     Console.WriteLine("cycles.json file not found.");
                 }
             }
             catch (Exception ex)
             {
-                // Handle exceptions during file reading or JSON parsing
                 Console.WriteLine($"Error updating analytics: {ex.Message}");
             }
         }

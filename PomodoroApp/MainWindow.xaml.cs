@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Media;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Newtonsoft.Json;
@@ -28,7 +27,7 @@ namespace PomodoroTimer
         private SoundPlayer alarmSoundPlayer;
         private SoundPlayer clickSoundPlayer;
         public int CompletedMinutes { get; set; } = 0;
-        private List<CompletedCycle> completedCycles = new List<CompletedCycle>();
+        public List<CompletedCycle> completedCycles { get; set; } = new List<CompletedCycle>();
 
         public MainWindow()
         {
@@ -42,7 +41,7 @@ namespace PomodoroTimer
             alarmSoundPlayer = new SoundPlayer(alarmSoundFilePath);
             string clickSoundFilePath = "C:\\projects\\pomodoroTimer\\PomodoroApp\\PomodoroApp\\assets\\SFX\\click.wav";
             clickSoundPlayer = new SoundPlayer(clickSoundFilePath);
-            LoadCompletedMinutes();
+            LoadCompletedCycles();
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -63,7 +62,6 @@ namespace PomodoroTimer
                     isWorking = false;
                     startButton.Content = "Start";
                     CompletedMinutes += workTime.Minutes;
-                    SaveCompletedMinutes();
 
                     CompletedCycle completedCycle = new CompletedCycle
                     {
@@ -190,10 +188,10 @@ namespace PomodoroTimer
             ResetTimer();
         }
 
-        private void LoadCompletedMinutes()
+        private void LoadCompletedCycles()
         {
             string folderPath = "bin";
-            string filePath = Path.Combine(folderPath, "score.bin");
+            string filePath = Path.Combine(folderPath, "cycles.json");
 
             try
             {
@@ -201,44 +199,19 @@ namespace PomodoroTimer
                 {
                     Directory.CreateDirectory(folderPath);
                 }
-
-                if (File.Exists(filePath))
+                if (!File.Exists(filePath))
                 {
-                    string content = File.ReadAllText(filePath);
-                    CompletedMinutes = int.Parse(content);
+                    File.WriteAllText(filePath, "[]");
                 }
-                else
-                {
-                    // Create the file if it doesn't exist
-                    File.WriteAllText(filePath, "0");
-                    CompletedMinutes = 0;
-                }
+                string existingContent = File.ReadAllText(filePath);
+                completedCycles = JsonConvert.DeserializeObject<List<CompletedCycle>>(existingContent);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error loading/completing cycles: {ex.Message}");
+                Console.WriteLine($"Error loading completed cycles: {ex.Message}");
             }
         }
 
-        private void SaveCompletedMinutes()
-        {
-            string folderPath = "bin";
-            string filePath = Path.Combine(folderPath, "score.bin");
-
-            try
-            {
-                if (!Directory.Exists(folderPath))
-                {
-                    Directory.CreateDirectory(folderPath);
-                }
-
-                File.WriteAllText(filePath, CompletedMinutes.ToString());
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error saving completed cycles: {ex.Message}");
-            }
-        }
         private void SaveCompletedCycles()
         {
             string folderPath = "bin";
@@ -250,22 +223,7 @@ namespace PomodoroTimer
                 {
                     Directory.CreateDirectory(folderPath);
                 }
-
-                List<CompletedCycle> existingCycles = new List<CompletedCycle>();
-
-                // Check if the file already exists
-                if (File.Exists(filePath))
-                {
-                    // Read existing content and deserialize it
-                    string existingContent = File.ReadAllText(filePath);
-                    existingCycles = JsonConvert.DeserializeObject<List<CompletedCycle>>(existingContent);
-                }
-
-                // Append the new cycles to the existing ones
-                existingCycles.AddRange(completedCycles);
-
-                // Serialize the combined list and save it to the file
-                string jsonContent = JsonConvert.SerializeObject(existingCycles);
+                string jsonContent = JsonConvert.SerializeObject(completedCycles);
                 File.WriteAllText(filePath, jsonContent);
             }
             catch (Exception ex)
