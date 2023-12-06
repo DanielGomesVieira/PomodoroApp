@@ -171,28 +171,46 @@ namespace PomodoroTimer
 
         private void LoadCompletedMinutes()
         {
-            string filePath = "score.txt";
+            string folderPath = "bin";
+            string filePath = Path.Combine(folderPath, "score.bin");
 
-            if (File.Exists(filePath))
+            try
             {
-                try
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                if (File.Exists(filePath))
                 {
                     string content = File.ReadAllText(filePath);
                     CompletedMinutes = int.Parse(content);
                 }
-                catch (Exception ex)
+                else
                 {
-                    Console.WriteLine($"Error loading completed cycles: {ex.Message}");
+                    // Create the file if it doesn't exist
+                    File.WriteAllText(filePath, "0");
+                    CompletedMinutes = 0;
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading/completing cycles: {ex.Message}");
             }
         }
 
         private void SaveCompletedCycles()
         {
-            string filePath = "score.txt";
+            string folderPath = "bin";
+            string filePath = Path.Combine(folderPath, "score.bin");
 
             try
             {
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
                 File.WriteAllText(filePath, CompletedMinutes.ToString());
             }
             catch (Exception ex)
@@ -200,11 +218,5 @@ namespace PomodoroTimer
                 Console.WriteLine($"Error saving completed cycles: {ex.Message}");
             }
         }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            SaveCompletedCycles();
-        }
-
     }
 }
