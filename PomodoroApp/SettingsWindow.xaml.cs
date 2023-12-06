@@ -17,7 +17,7 @@ namespace PomodoroApp
         public SettingsWindow()
         {
             InitializeComponent();
-            string clickSoundFilePath = @"C:\projects\pomodoroTimer\PomodoroApp\PomodoroApp\assets\click.wav";
+            string clickSoundFilePath = "C:\\projects\\pomodoroTimer\\PomodoroApp\\PomodoroApp\\assets\\SFX\\click.wav";
             clickSoundPlayer = new SoundPlayer(clickSoundFilePath);
         }
 

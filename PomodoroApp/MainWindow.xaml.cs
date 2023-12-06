@@ -25,9 +25,9 @@ namespace PomodoroTimer
             timer.Tick += Timer_Tick;
             ResetTimer();
 
-            string alarmSoundFilePath = @"C:\projects\pomodoroTimer\PomodoroApp\PomodoroApp\assets\alarm.wav";
+            string alarmSoundFilePath = "C:\\projects\\pomodoroTimer\\PomodoroApp\\PomodoroApp\\assets\\SFX\\alarm.wav";
             alarmSoundPlayer = new SoundPlayer(alarmSoundFilePath);
-            string clickSoundFilePath = @"C:\projects\pomodoroTimer\PomodoroApp\PomodoroApp\assets\click.wav";
+            string clickSoundFilePath = "C:\\projects\\pomodoroTimer\\PomodoroApp\\PomodoroApp\\assets\\SFX\\click.wav";
             clickSoundPlayer = new SoundPlayer(clickSoundFilePath);
         }
 
@@ -143,9 +143,25 @@ namespace PomodoroTimer
                 ResetTimer();
             }
         }
+
+        private void AnalyticsButton_Click(object sender, RoutedEventArgs e)
+        {
+            clickSoundPlayer.Play();
+            OpenAnalytics();
+        }
+
+        private void OpenAnalytics()
+        {
+            AnalyticsWindow analyticsWindow = new AnalyticsWindow();
+            if (analyticsWindow.ShowDialog() == true)
+            {
+                ResetTimer();
+            }
+        }
         private void SettingsWindow_SettingsChanged(object sender, SettingsChangedEventArgs e)
         {
             ResetTimer();
         }
+
     }
 }
