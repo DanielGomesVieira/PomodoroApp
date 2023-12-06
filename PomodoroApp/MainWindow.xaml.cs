@@ -31,6 +31,7 @@ namespace PomodoroTimer
             alarmSoundPlayer = new SoundPlayer(alarmSoundFilePath);
             string clickSoundFilePath = "C:\\projects\\pomodoroTimer\\PomodoroApp\\PomodoroApp\\assets\\SFX\\click.wav";
             clickSoundPlayer = new SoundPlayer(clickSoundFilePath);
+            LoadCompletedMinutes();
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -170,9 +171,7 @@ namespace PomodoroTimer
 
         private void LoadCompletedMinutes()
         {
-            // Load the completed cycles from a settings file or any other persistent storage
-            // For simplicity, I'm using a file named "settings.txt" in the application directory
-            string filePath = "C:\\projects\\pomodoroTimer\\PomodoroApp\\PomodoroApp\\score.txt";
+            string filePath = "score.txt";
 
             if (File.Exists(filePath))
             {
@@ -183,7 +182,6 @@ namespace PomodoroTimer
                 }
                 catch (Exception ex)
                 {
-                    // Handle exceptions while reading the file (e.g., file not found, invalid content)
                     Console.WriteLine($"Error loading completed cycles: {ex.Message}");
                 }
             }
@@ -191,9 +189,7 @@ namespace PomodoroTimer
 
         private void SaveCompletedCycles()
         {
-            // Save the completed cycles to a settings file or any other persistent storage
-            // For simplicity, I'm using a file named "settings.txt" in the application directory
-            string filePath = "C:\\projects\\pomodoroTimer\\PomodoroApp\\PomodoroApp\\score.txt";
+            string filePath = "score.txt";
 
             try
             {
@@ -201,14 +197,12 @@ namespace PomodoroTimer
             }
             catch (Exception ex)
             {
-                // Handle exceptions while writing to the file
                 Console.WriteLine($"Error saving completed cycles: {ex.Message}");
             }
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            // Save the completed cycles when the window is closing
             SaveCompletedCycles();
         }
 
