@@ -8,7 +8,7 @@
         Title="Analytics" Height="190" Width="300">
     <Grid>
         <StackPanel Margin="20">
-            <TextBlock Text="Working minutes today:" Margin="0 0 0 10" HorizontalAlignment="Center"/>
+            <TextBlock x:Name="minutesTodayBox" Text="Working minutes today:" Margin="0 0 0 10" HorizontalAlignment="Center"/>
             <TextBlock Text="Working minutes this week:" Margin="0 10 0 10" HorizontalAlignment="Center"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 20 0 0">

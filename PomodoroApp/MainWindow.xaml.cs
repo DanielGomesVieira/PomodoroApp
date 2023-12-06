@@ -1,5 +1,6 @@
 ﻿using PomodoroApp;
 using System;
+using System.IO;
 using System.Media;
 using System.Windows;
 using System.Windows.Input;
@@ -16,6 +17,7 @@ namespace PomodoroTimer
         private bool isWorking = true;
         private SoundPlayer alarmSoundPlayer;
         private SoundPlayer clickSoundPlayer;
+        public int CompletedMinutes { get; set; } = 0;
 
         public MainWindow()
         {
@@ -48,6 +50,8 @@ namespace PomodoroTimer
                     currentTime = breakTime;
                     isWorking = false;
                     startButton.Content = "Start";
+                    CompletedMinutes += workTime.Minutes;
+                    SaveCompletedCycles();
                 }
                 else
                 {
@@ -153,6 +157,7 @@ namespace PomodoroTimer
         private void OpenAnalytics()
         {
             AnalyticsWindow analyticsWindow = new AnalyticsWindow();
+            analyticsWindow.UpdateAnalytics(CompletedMinutes);
             if (analyticsWindow.ShowDialog() == true)
             {
                 ResetTimer();
@@ -161,6 +166,50 @@ namespace PomodoroTimer
         private void SettingsWindow_SettingsChanged(object sender, SettingsChangedEventArgs e)
         {
             ResetTimer();
+        }
+
+        private void LoadCompletedMinutes()
+        {
+            // Load the completed cycles from a settings file or any other persistent storage
+            // For simplicity, I'm using a file named "settings.txt" in the application directory
+            string filePath = "C:\\projects\\pomodoroTimer\\PomodoroApp\\PomodoroApp\\score.txt";
+
+            if (File.Exists(filePath))
+            {
+                try
+                {
+                    string content = File.ReadAllText(filePath);
+                    CompletedMinutes = int.Parse(content);
+                }
+                catch (Exception ex)
+                {
+                    // Handle exceptions while reading the file (e.g., file not found, invalid content)
+                    Console.WriteLine($"Error loading completed cycles: {ex.Message}");
+                }
+            }
+        }
+
+        private void SaveCompletedCycles()
+        {
+            // Save the completed cycles to a settings file or any other persistent storage
+            // For simplicity, I'm using a file named "settings.txt" in the application directory
+            string filePath = "C:\\projects\\pomodoroTimer\\PomodoroApp\\PomodoroApp\\score.txt";
+
+            try
+            {
+                File.WriteAllText(filePath, CompletedMinutes.ToString());
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions while writing to the file
+                Console.WriteLine($"Error saving completed cycles: {ex.Message}");
+            }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            // Save the completed cycles when the window is closing
+            SaveCompletedCycles();
         }
 
     }

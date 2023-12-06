@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Media;
+using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,6 +22,7 @@ namespace PomodoroApp
     public partial class AnalyticsWindow : Window
     {
         private SoundPlayer clickSoundPlayer;
+        public int CompletedMinutes { get; set; }
 
         public AnalyticsWindow()
         {
@@ -33,6 +35,12 @@ namespace PomodoroApp
             clickSoundPlayer.Play();
             DialogResult = false;
             Close();
+        }
+
+        public void UpdateAnalytics(int minutes)
+        {
+            CompletedMinutes = minutes;
+            minutesTodayBox.Text = "Total minutes today: " + CompletedMinutes;
         }
     }
 }

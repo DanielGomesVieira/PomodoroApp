@@ -127,6 +127,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="score.txt" />
     <Resource Include="assets\Images\analytics.png" />
     <Content Include="assets\SFX\alarm.wav" />
     <Content Include="assets\SFX\click.wav" />
